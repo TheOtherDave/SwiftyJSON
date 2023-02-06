@@ -657,7 +657,7 @@ extension JSON: Swift.RawRepresentable {
             } catch _ {
                 return nil
             }
-        case .string: return tryToPrintStringsAsURLs ? URL(string: rawString) ?? rawString : rawString
+        case .string: return tryToPrintStringsAsURLs ? URL(string: rawString)?.description ?? rawString : rawString
         case .number: return rawNumber.stringValue
         case .bool:   return rawBool.description
         case .null:   return "null"
