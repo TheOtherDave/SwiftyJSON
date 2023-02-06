@@ -201,7 +201,8 @@ public struct JSON {
     fileprivate var rawNumber: NSNumber = 0
     fileprivate var rawNull: NSNull = NSNull()
     fileprivate var rawBool: Bool = false
-
+    /// Set to true to attempt to convert strings to URLs in `.description`
+    public var tryToPrintStringsAsURLs = false
     /// JSON type, fileprivate setter
     public fileprivate(set) var type: Type = .null
 
@@ -607,7 +608,11 @@ extension JSON: Swift.RawRepresentable {
 						throw SwiftyJSONError.elementTooDeep
 					}
 					if nestedValue.type == .string {
-						return "\"\(key)\": \"\(nestedString.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\""))\""
+						if tryToPrintStringsAsURLs == true, let url = URL(string: nestedString) {
+							return "\"\(key)\": \(url)"
+						} else {
+							return "\"\(key)\": \"\(nestedString.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\""))\""
+						}
 					} else {
 						return "\"\(key)\": \(nestedString)"
 					}
