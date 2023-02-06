@@ -643,7 +643,11 @@ extension JSON: Swift.RawRepresentable {
                         throw SwiftyJSONError.invalidJSON
                     }
                     if nestedValue.type == .string {
+											if tryToPrintStringsAsURLs == true, let url = URL(string: nestedString) {
+									      return "\"\(key)\": \(url)"
+											} else {
                         return "\"\(nestedString.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\""))\""
+											}
                     } else {
                         return nestedString
                     }
@@ -653,7 +657,7 @@ extension JSON: Swift.RawRepresentable {
             } catch _ {
                 return nil
             }
-        case .string: return rawString
+        case .string: return tryToPrintStringsAsURLs ? URL(string: rawString) ?? rawString : rawString
         case .number: return rawNumber.stringValue
         case .bool:   return rawBool.description
         case .null:   return "null"
